@@ -4,6 +4,7 @@ import java.util.Comparator;
 
 import models.Shape;
 
+//Untyped comparators, for this program was made before we were taught generics.
 public class AreaComparator implements Comparator {
 
 	@Override

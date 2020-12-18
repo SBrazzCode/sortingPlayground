@@ -1,0 +1,1 @@
+10 Cylinder 12 65 Cone 28 17 Cone 86 97 Cone 17 37 Cylinder 39 28 PentagonalPrism 17 64 TriangularPrism 27 35 TriangularPrism 37 23 SquarePrism 10 35 Cylinder 2 1

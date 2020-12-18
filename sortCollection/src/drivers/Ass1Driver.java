@@ -43,7 +43,7 @@ public class Ass1Driver {
 		double double1;
 		double double2;
 
-		System.out.println("Reading Shapes");
+		System.out.println("Reading Shapes Threaded");
 		for (int i = 0; i < shapes.length; i++) {
 			shapeName = scanner.next();
 			double1 = scanner.nextDouble();
@@ -97,7 +97,7 @@ public class Ass1Driver {
 			comp = null;
 			break;
 		}
-		
+
 		long start = System.currentTimeMillis();
 
 		if (comp != null) {
@@ -112,7 +112,7 @@ public class Ass1Driver {
 				Sort.insertionSort(shapes, comp);
 				break;
 			case 'm':
-				Sort.mergeSort(shapes, comp, 0, shapes.length -1);
+				Sort.mergeSort(shapes, comp, 0, shapes.length - 1);
 			case 'q':
 				Sort.quickSort(shapes, comp);
 			}
@@ -121,15 +121,14 @@ public class Ass1Driver {
 
 			}
 		}
-		
+
 		long end = System.currentTimeMillis();
 
-
-		for (int i = 0; i < shapes.length - 1; i += 1000) {
+		for (int i = 0; i < shapes.length - 1; i++) {
 			System.out.println(shapes[i]);
 		}
 		System.out.println(shapes[shapes.length - 1]);
-		
+
 		System.out.printf("Time took: %6dms", (end - start));
 	}
 

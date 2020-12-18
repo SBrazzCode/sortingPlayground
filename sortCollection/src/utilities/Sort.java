@@ -104,12 +104,29 @@ public class Sort {
 
 	public static void mergeSort(Comparable[] comparables, Comparator comp, int left, int right) {
 
+		int median;
+		int leftSize;
+		int rightSize;
+		
 		if (left < right) {
-
-			int median = (right + left) / 2;
-
-			MergeSortRunnable ms1 = new MergeSortRunnable(comparables, comp, left, right);
-			MergeSortRunnable ms2 = new MergeSortRunnable(comparables, comp, median + 1, right);
+			
+			//The median will be used non-inclusively (so '+ 1' is needed for an even comparables).
+			median = (right - left + 1) / 2;
+			
+			//if comparables is even, normal case. Else increase size by 1.
+			rightSize = (right - left + 1) % 2 == 0 ? median: median + 1;
+			
+			Comparable[] leftArray = new Comparable[median];
+			Comparable[] rightArray = new Comparable[rightSize];
+			
+			System.arraycopy(comparables, left, leftArray, 0, leftArray.length);
+			System.arraycopy(comparables, median, rightArray, 0, rightArray.length);
+			
+			//Thread for the left side.
+			MergeSortRunnable ms1 = new MergeSortRunnable(leftArray, comp, 0, leftArray.length - 1);
+			
+			//Thread for the right side.
+			MergeSortRunnable ms2 = new MergeSortRunnable(rightArray, comp, 0, rightArray.length - 1);
 
 			Thread thread1 = new Thread(ms1);
 			Thread thread2 = new Thread(ms2);
@@ -123,8 +140,17 @@ public class Sort {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			
+			//Copy left back into comparables
+			System.arraycopy(leftArray, 0, comparables, 0, leftArray.length);
+			
+			//Copy right back into comparables
+			System.arraycopy(rightArray, 0, comparables, median, rightArray.length);
 
-			Comparable[] auxillary = merge(comparables, comp, left, median, median + 1, right);
+			//One last merge for the two halves.
+			Comparable[] auxillary = merge(comparables, comp, left, median - 1, median, right);
+			
+			//Copy the auxillary back into the original array.
 			System.arraycopy(auxillary, 0, comparables, left, right - left + 1);
 		}
 	}
