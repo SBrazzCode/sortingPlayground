@@ -165,7 +165,6 @@ public class Sort {
 	public static void mergeSort(Comparable[] comparables, Comparator comp, int left, int right) {
 
 		int median;
-		int leftSize;
 		int rightSize;
 
 		if (left < right) {
@@ -201,6 +200,8 @@ public class Sort {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			
+			finalMerge(leftArray, rightArray, comparables);
 
 			// Copy left back into comparables
 			System.arraycopy(leftArray, 0, comparables, 0, leftArray.length);
@@ -214,6 +215,11 @@ public class Sort {
 			// Copy the auxillary back into the original array.
 			System.arraycopy(auxillary, 0, comparables, left, right - left + 1);
 		}
+	}
+
+	private static void finalMerge(Comparable[] leftArray, Comparable[] rightArray, Comparable[] comparables) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	public static Comparable[] merge(Comparable[] comparables, Comparator comp, int left1, int right1, int left2,
@@ -245,9 +251,7 @@ public class Sort {
 	 * @param right
 	 */
 	public static void mergeSort(Comparable[] comparables, int left, int right) {
-		// Split array in half
-		// Thread each splitting (maybe only start new threads if the splitting isn't
-//too deep
+
 		if (left < right) {
 			int median = (right + left) / 2;
 			mergeSort(comparables, left, median);

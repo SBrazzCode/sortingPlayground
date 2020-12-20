@@ -3,6 +3,7 @@ package drivers;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -12,7 +13,7 @@ import utilities.AreaComparator;
 import utilities.Sort;
 import utilities.VolumeComparator;
 
-public class Ass1Driver {
+public class ShapeSortingDriver {
 
 	// If this is wrong, check how the args gets parsed. I'm prett sure it's in a
 	// weird way.
@@ -80,7 +81,7 @@ public class Ass1Driver {
 		char compareType = arguments.get('t').charAt(0);
 		char sortMethod = arguments.get('s').charAt(0);
 
-		Comparator comp;
+		Comparator<Shape> comp;
 
 		System.out.println("Sorting shapes");
 		switch (compareType) {
@@ -146,10 +147,15 @@ public class Ass1Driver {
 		
 		long end = System.currentTimeMillis();
 
+		PrintWriter pw = new PrintWriter(new File("./output.txt"));
 
 		for (int i = 0; i < shapes.length - 1; i++) {
-			System.out.println(shapes[i]);
+			
+			//implicitly drop decimal points
+			pw.write((int) ((Shape) shapes[i]).getBaseArea());
+			pw.write(",");
 		}
+		pw.close();
 		System.out.println(shapes[shapes.length - 1]);
 		
 		System.out.printf("Time took: %6dms", (end - start));
