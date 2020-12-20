@@ -200,8 +200,6 @@ public class Sort {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			
-			finalMerge(leftArray, rightArray, comparables);
 
 			// Copy left back into comparables
 			System.arraycopy(leftArray, 0, comparables, 0, leftArray.length);
@@ -217,10 +215,6 @@ public class Sort {
 		}
 	}
 
-	private static void finalMerge(Comparable[] leftArray, Comparable[] rightArray, Comparable[] comparables) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	public static Comparable[] merge(Comparable[] comparables, Comparator comp, int left1, int right1, int left2,
 			int right2) {
