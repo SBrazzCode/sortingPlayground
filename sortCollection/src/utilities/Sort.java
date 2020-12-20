@@ -165,7 +165,6 @@ public class Sort {
 	public static void mergeSort(Comparable[] comparables, Comparator comp, int left, int right) {
 
 		int median;
-		int leftSize;
 		int rightSize;
 
 		if (left < right) {
@@ -216,6 +215,7 @@ public class Sort {
 		}
 	}
 
+
 	public static Comparable[] merge(Comparable[] comparables, Comparator comp, int left1, int right1, int left2,
 			int right2) {
 
@@ -245,9 +245,7 @@ public class Sort {
 	 * @param right
 	 */
 	public static void mergeSort(Comparable[] comparables, int left, int right) {
-		// Split array in half
-		// Thread each splitting (maybe only start new threads if the splitting isn't
-//too deep
+
 		if (left < right) {
 			int median = (right + left) / 2;
 			mergeSort(comparables, left, median);
