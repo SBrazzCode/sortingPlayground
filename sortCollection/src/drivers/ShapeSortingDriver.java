@@ -89,10 +89,10 @@ public class ShapeSortingDriver {
 			comp = null;
 			break;
 		case 'a':
-			comp = new AreaComparator();
+			comp = new AreaComparator<Shape>();
 			break;
 		case 'v':
-			comp = new VolumeComparator();
+			comp = new VolumeComparator<Shape>();
 			break;
 		default:
 			comp = null;
@@ -156,6 +156,10 @@ public class ShapeSortingDriver {
 			pw.write(",");
 		}
 		pw.close();
+		
+		for (int i = 0; i < shapes.length - 1; i += 1000) {
+			System.out.println(shapes[i]);
+		}
 		System.out.println(shapes[shapes.length - 1]);
 		
 		System.out.printf("Time took: %6dms", (end - start));

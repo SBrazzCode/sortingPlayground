@@ -1,8 +1,10 @@
 package utilities;
 
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedList;
 
-public class Sort {
+public class Sort<E> {
 
 	/**
 	 * sorts the comparables using bubblesort.
@@ -164,6 +166,39 @@ public class Sort {
 
 	public static void mergeSort(Comparable[] comparables, Comparator comp, int left, int right) {
 
+		int numProcessors = Runtime.getRuntime().availableProcessors();
+		multiThreadMergeSort(comparables, comp, left, right, numProcessors);
+
+	}
+
+	/**
+	 * sorts the comparables using merge sort recursively.
+	 * 
+	 * @param comparables
+	 * @param comp
+	 * @param left
+	 * @param right
+	 */
+	public static void mergeSortUnRunnable(Comparable[] comparables, Comparator comp, int left, int right) {
+
+		if (left < right) {
+			int median = (right + left) / 2;
+
+			// mergesort the left side
+			mergeSortUnRunnable(comparables, comp, left, median);
+
+			// mergesort the right side
+			mergeSortUnRunnable(comparables, comp, median + 1, right);
+
+			// merge the two halves together
+			Comparable[] auxillary = merge(comparables, comp, left, median, median + 1, right);
+			System.arraycopy(auxillary, 0, comparables, left, right - left + 1);
+		}
+
+	}
+	
+	static void multiThreadMergeSort(Comparable[] comparables, Comparator comp, int left, int right,
+			int numProcessors) {
 		int median;
 		int rightSize;
 
@@ -173,52 +208,63 @@ public class Sort {
 			// comparables).
 			median = (right - left + 1) / 2;
 
-			// if comparables is even, normal case. Else increase size by 1.
+			// right - median or might just work.
+			// if comparables is even, normal case. Else increase size by 1. (this just handles the extra unit for an odd number size)
 			rightSize = (right - left + 1) % 2 == 0 ? median : median + 1;
 
-			Comparable[] leftArray = new Comparable[median];
-			Comparable[] rightArray = new Comparable[rightSize];
+			if (numProcessors >= 2) {
+				Comparable[] leftArray = new Comparable[median];
+				Comparable[] rightArray = new Comparable[rightSize];
 
-			System.arraycopy(comparables, left, leftArray, 0, leftArray.length);
-			System.arraycopy(comparables, median, rightArray, 0, rightArray.length);
+				System.arraycopy(comparables, left, leftArray, 0, leftArray.length);
+				System.arraycopy(comparables, median, rightArray, 0, rightArray.length);
 
-			// Thread for the left side.
-			MergeSortRunnable ms1 = new MergeSortRunnable(leftArray, comp, 0, leftArray.length - 1);
+				// Thread for the left side.
+				MergeSortRunnable leftRunnable = new MergeSortRunnable(leftArray, comp, 0, leftArray.length - 1,
+						numProcessors / 2);
 
-			// Thread for the right side.
-			MergeSortRunnable ms2 = new MergeSortRunnable(rightArray, comp, 0, rightArray.length - 1);
+				// Thread for the right side.
+				MergeSortRunnable rightRunnable = new MergeSortRunnable(rightArray, comp, 0, rightArray.length - 1,
+						numProcessors / 2);
 
-			Thread thread1 = new Thread(ms1);
-			Thread thread2 = new Thread(ms2);
+				Thread leftThread = new Thread(leftRunnable);
+				Thread rightThread = new Thread(rightRunnable);
 
-			thread1.start();
-			thread2.start();
+				leftThread.start();
+				rightThread.start();
 
-			try {
-				thread1.join();
-				thread2.join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+				try {
+					leftThread.join();
+					rightThread.join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+				// Copy left back into comparables
+				System.arraycopy(leftArray, 0, comparables, 0, leftArray.length);
+
+				// Copy right back into comparables
+				System.arraycopy(rightArray, 0, comparables, median, rightArray.length);
+
+			} else {
+				
+				//Merge sort the rest on this thread (call the non-multithreaded merge sort).
+				mergeSortUnRunnable(comparables, comp, left, right);
 			}
-
-			// Copy left back into comparables
-			System.arraycopy(leftArray, 0, comparables, 0, leftArray.length);
-
-			// Copy right back into comparables
-			System.arraycopy(rightArray, 0, comparables, median, rightArray.length);
 
 			// One last merge for the two halves.
 			Comparable[] auxillary = merge(comparables, comp, left, median - 1, median, right);
 
 			// Copy the auxillary back into the original array.
 			System.arraycopy(auxillary, 0, comparables, left, right - left + 1);
+
 		}
 	}
-
 
 	public static Comparable[] merge(Comparable[] comparables, Comparator comp, int left1, int right1, int left2,
 			int right2) {
 
+		//This is an inefficient use of space, fix this after you get the sort working (might just be right2 - left1)
 		Comparable[] auxillary = new Comparable[right2 + 1];
 		int i = left1;
 		int j = left2;
