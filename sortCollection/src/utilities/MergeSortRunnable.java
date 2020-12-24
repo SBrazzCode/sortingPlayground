@@ -2,15 +2,15 @@ package utilities;
 
 import java.util.Comparator;
 
-public class MergeSortRunnable implements Runnable {
+public class MergeSortRunnable<E> implements Runnable {
 
-	private Comparable[] comparables;
-	private Comparator comp;
+	private E[] comparables;
+	private Comparator<E> comp;
 	private int left;
 	private int right;
 	private int numProcessorsAvailable;
 
-	public MergeSortRunnable(Comparable[] comparables, Comparator comp, int left, int right, int numProcessorsAvailable) {
+	public MergeSortRunnable(E[] comparables, Comparator<E> comp, int left, int right, int numProcessorsAvailable) {
 		this.comparables = comparables;
 		this.comp = comp;
 		this.left = left;

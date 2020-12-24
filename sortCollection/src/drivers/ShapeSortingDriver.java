@@ -39,7 +39,7 @@ public class ShapeSortingDriver {
 		Scanner scanner = new Scanner(file);
 
 		int numShapes = scanner.nextInt();
-		Comparable[] shapes = new Comparable[numShapes];
+		Shape[] shapes = new Shape[numShapes];
 		String shapeName;
 		double double1;
 		double double2;

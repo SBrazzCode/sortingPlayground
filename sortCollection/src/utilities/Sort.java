@@ -1,22 +1,24 @@
 package utilities;
 
+import java.lang.reflect.Array;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class Sort<E> {
+public class Sort {
 
 	/**
 	 * sorts the comparables using bubblesort.
+	 * @param <E>
 	 * 
 	 * @param comparables
 	 * @param comparator
 	 */
-	public static void bubbleSort(Comparable[] comparables, Comparator comparator) {
+	public static <E> void bubbleSort(E[] comparables, Comparator<E> comparator) {
 
-		Comparable temp;
-		Comparable left;
-		Comparable right;
+		E temp;
+		E left;
+		E right;
 		for (int i = 1; i < comparables.length; i++) {
 			for (int j = 0; j < comparables.length - i; j++) {
 				left = comparables[j];
@@ -35,11 +37,11 @@ public class Sort<E> {
 	 * 
 	 * @param comparables
 	 */
-	public static void bubbleSort(Comparable[] comparables) {
+	public static <E extends Comparable<E>> void bubbleSort(E[] comparables) {
 
-		Comparable temp;
-		Comparable left;
-		Comparable right;
+		E temp;
+		E left;
+		E right;
 		for (int i = 1; i < comparables.length; i++) {
 			for (int j = 0; j < comparables.length - i; j++) {
 				left = comparables[j];
@@ -59,12 +61,12 @@ public class Sort<E> {
 	 * @param comparables
 	 * @param comp
 	 */
-	public static void selectionSort(Comparable[] comparables, Comparator comp) {
+	public static <E> void selectionSort(E[] comparables, Comparator<E> comp) {
 
 		int maximumIndex = 0;
-		Comparable maximum = comparables[0];
+		E maximum = comparables[0];
 		int right = comparables.length;
-		Comparable temp;
+		E temp;
 
 		for (int left = 0; left < comparables.length; left++) {
 			for (int j = left + 1; j < right; j++) {
@@ -88,12 +90,12 @@ public class Sort<E> {
 	 * 
 	 * @param comparables
 	 */
-	public static void selectionSort(Comparable[] comparables) {
+	public static <E extends Comparable<E>> void selectionSort(E[] comparables) {
 
 		int maximumIndex = 0;
-		Comparable maximum = comparables[0];
+		E maximum = comparables[0];
 		int right = comparables.length;
-		Comparable temp;
+		E temp;
 
 		for (int left = 0; left < comparables.length; left++) {
 			for (int j = left + 1; j < right; j++) {
@@ -103,8 +105,8 @@ public class Sort<E> {
 				}
 			}
 
+			//?
 			if (left == 20235) {
-				@SuppressWarnings("unused")
 				int f = 1;
 				int s = f + 2;
 			}
@@ -124,10 +126,10 @@ public class Sort<E> {
 	 * @param comparables
 	 * @param comp
 	 */
-	public static void insertionSort(Comparable[] comparables, Comparator comp) {
+	public static <E> void insertionSort(E[] comparables, Comparator<E> comp) {
 
-		Comparable current;
-		Comparable temp;
+		E current;
+		E temp;
 		int j;
 		for (int i = 1; i < comparables.length; i++) {
 			current = comparables[i];
@@ -144,10 +146,10 @@ public class Sort<E> {
 
 	}
 
-	public static void insertionSort(Comparable[] comparables) {
+	public static <E extends Comparable<E>> void insertionSort(E[] comparables) {
 
-		Comparable current;
-		Comparable temp;
+		E current;
+		E temp;
 		int j;
 		for (int i = 1; i < comparables.length; i++) {
 			current = comparables[i];
@@ -164,8 +166,9 @@ public class Sort<E> {
 
 	}
 
-	public static void mergeSort(Comparable[] comparables, Comparator comp, int left, int right) {
+	public static <E> void mergeSort(E[] comparables, Comparator<E> comp, int left, int right) {
 
+		
 		int numProcessors = Runtime.getRuntime().availableProcessors();
 		multiThreadMergeSort(comparables, comp, left, right, numProcessors);
 
@@ -179,8 +182,9 @@ public class Sort<E> {
 	 * @param left
 	 * @param right
 	 */
-	public static void mergeSortUnRunnable(Comparable[] comparables, Comparator comp, int left, int right) {
+	public static <E> void mergeSortUnRunnable(E[] comparables, Comparator<E> comp, int left, int right) {
 
+		
 		if (left < right) {
 			int median = (right + left) / 2;
 
@@ -191,14 +195,16 @@ public class Sort<E> {
 			mergeSortUnRunnable(comparables, comp, median + 1, right);
 
 			// merge the two halves together
-			Comparable[] auxillary = merge(comparables, comp, left, median, median + 1, right);
+			E[] auxillary = merge(comparables, comp, left, median, median + 1, right);
 			System.arraycopy(auxillary, 0, comparables, left, right - left + 1);
 		}
 
 	}
 	
-	static void multiThreadMergeSort(Comparable[] comparables, Comparator comp, int left, int right,
+	static <E> void multiThreadMergeSort(E[] comparables, Comparator<E> comp, int left, int right,
 			int numProcessors) {
+		
+		
 		int median;
 		int rightSize;
 
@@ -213,18 +219,19 @@ public class Sort<E> {
 			rightSize = (right - left + 1) % 2 == 0 ? median : median + 1;
 
 			if (numProcessors >= 2) {
-				Comparable[] leftArray = new Comparable[median];
-				Comparable[] rightArray = new Comparable[rightSize];
+				
+				E[] leftArray = createGenericArray(comparables, median);
+				E[] rightArray = createGenericArray(comparables, rightSize);
 
 				System.arraycopy(comparables, left, leftArray, 0, leftArray.length);
 				System.arraycopy(comparables, median, rightArray, 0, rightArray.length);
 
 				// Thread for the left side.
-				MergeSortRunnable leftRunnable = new MergeSortRunnable(leftArray, comp, 0, leftArray.length - 1,
+				MergeSortRunnable<E> leftRunnable = new MergeSortRunnable<>(leftArray, comp, 0, leftArray.length - 1,
 						numProcessors / 2);
 
 				// Thread for the right side.
-				MergeSortRunnable rightRunnable = new MergeSortRunnable(rightArray, comp, 0, rightArray.length - 1,
+				MergeSortRunnable<E> rightRunnable = new MergeSortRunnable<>(rightArray, comp, 0, rightArray.length - 1,
 						numProcessors / 2);
 
 				Thread leftThread = new Thread(leftRunnable);
@@ -253,7 +260,7 @@ public class Sort<E> {
 			}
 
 			// One last merge for the two halves.
-			Comparable[] auxillary = merge(comparables, comp, left, median - 1, median, right);
+			E[] auxillary = merge(comparables, comp, left, median - 1, median, right);
 
 			// Copy the auxillary back into the original array.
 			System.arraycopy(auxillary, 0, comparables, left, right - left + 1);
@@ -261,11 +268,11 @@ public class Sort<E> {
 		}
 	}
 
-	public static Comparable[] merge(Comparable[] comparables, Comparator comp, int left1, int right1, int left2,
+	public static <E>  E[] merge(E[] comparables, Comparator<E> comp, int left1, int right1, int left2,
 			int right2) {
 
 		//This is an inefficient use of space, fix this after you get the sort working (might just be right2 - left1)
-		Comparable[] auxillary = new Comparable[right2 + 1];
+		E[] auxillary = createGenericArray(comparables, right2 + 1);
 		int i = left1;
 		int j = left2;
 		int k = 0;
@@ -282,6 +289,7 @@ public class Sort<E> {
 
 		return auxillary;
 	}
+	
 
 	/**
 	 * sorts the comparables using mergesort.
@@ -290,14 +298,14 @@ public class Sort<E> {
 	 * @param left
 	 * @param right
 	 */
-	public static void mergeSort(Comparable[] comparables, int left, int right) {
+	public static <E extends Comparable<E>> void mergeSort(E[] comparables, int left, int right) {
 
 		if (left < right) {
 			int median = (right + left) / 2;
 			mergeSort(comparables, left, median);
 			mergeSort(comparables, median + 1, right);
 
-			Comparable[] auxillary = merge(comparables, left, median, median + 1, right);
+			E[] auxillary = merge(comparables, left, median, median + 1, right);
 			System.arraycopy(auxillary, 0, comparables, left, right - left + 1);
 		}
 
@@ -313,9 +321,9 @@ public class Sort<E> {
 	 * @param right2
 	 * @return
 	 */
-	private static Comparable[] merge(Comparable[] comparables, int left1, int right1, int left2, int right2) {
+	private static <E extends Comparable<E>> E[] merge(E[] comparables, int left1, int right1, int left2, int right2) {
 
-		Comparable[] auxillary = new Comparable[right2 + 1];
+		E[] auxillary = createGenericArray(comparables, right2 + 1);
 		int i = left1;
 		int j = left2;
 		int k = 0;
@@ -332,6 +340,11 @@ public class Sort<E> {
 
 		return auxillary;
 	}
+	
+	@SuppressWarnings("unchecked")
+	private static <E> E[] createGenericArray(E[] arrayWithType, int size) {
+		return (E[]) Array.newInstance(arrayWithType.getClass().getComponentType(), size);
+	}
 
 	/**
 	 * Sorts the comparables using quicksort.
@@ -341,11 +354,11 @@ public class Sort<E> {
 	 * @param left
 	 * @param right
 	 */
-	public static void quickSort(Comparable[] comparables, Comparator comp, int left, int right) {
+	public static <E> void quickSort(E[] comparables, Comparator<E> comp, int left, int right) {
 
 		if (left < right) {
 
-			Comparable pivot = comparables[0];
+			E pivot = comparables[0];
 
 			int p = partition(comparables, comp, left, right);
 			// parition
@@ -365,8 +378,8 @@ public class Sort<E> {
 	 * @param right
 	 * @return
 	 */
-	private static int partition(Comparable[] comparables, Comparator comp, int left, int right) {
-		Comparable pivot = comparables[left];
+	private static <E> int partition(E[] comparables, Comparator<E> comp, int left, int right) {
+		E pivot = comparables[left];
 		int p = left;
 
 		for (int r = left + 1; r <= right; r++) {
@@ -391,11 +404,11 @@ public class Sort<E> {
 	 * @param left
 	 * @param right
 	 */
-	public static void quickSort(Comparable[] comparables, int left, int right) {
+	public static <E extends Comparable<E>> void quickSort(E[] comparables, int left, int right) {
 
 		if (left < right) {
 
-			Comparable pivot = comparables[0];
+			E pivot = comparables[0];
 
 			int p = partition(comparables, left, right);
 			// parition
@@ -414,8 +427,8 @@ public class Sort<E> {
 	 * @param right
 	 * @return
 	 */
-	private static int partition(Comparable[] comparables, int left, int right) {
-		Comparable pivot = comparables[left];
+	private static <E extends Comparable<E>> int partition(E[] comparables, int left, int right) {
+		E pivot = comparables[left];
 		int p = left;
 
 		for (int r = left + 1; r <= right; r++) {
@@ -440,7 +453,7 @@ public class Sort<E> {
 	 * @param comparables
 	 * @param comp
 	 */
-	public static void heapSort(Comparable[] comparables, Comparator comp) {
+	public static <E> void heapSort(E[] comparables, Comparator<E> comp) {
 
 		int n = comparables.length;
 
@@ -451,7 +464,7 @@ public class Sort<E> {
 		// One by one extract an element from heap
 		for (int i = n - 1; i > 0; i--) {
 			// Move current root to end
-			Comparable temp = comparables[0];
+			E temp = comparables[0];
 			comparables[0] = comparables[i];
 			comparables[i] = temp;
 
@@ -469,7 +482,7 @@ public class Sort<E> {
 	 * @param n
 	 * @param i
 	 */
-	private static void heapify(Comparable[] comparables, Comparator comp, int n, int i) {
+	private static <E> void heapify(E[] comparables, Comparator<E> comp, int n, int i) {
 		int largest = i; // Initialize largest as root
 		int l = 2 * i + 1; // left = 2*i + 1
 		int r = 2 * i + 2; // right = 2*i + 2
@@ -484,7 +497,7 @@ public class Sort<E> {
 
 		// If largest is not root
 		if (largest != i) {
-			Comparable swap = comparables[i];
+			E swap = comparables[i];
 			comparables[i] = comparables[largest];
 			comparables[largest] = swap;
 
@@ -500,7 +513,7 @@ public class Sort<E> {
 	 * 
 	 * @param comparables
 	 */
-	public static void heapSort(Comparable[] comparables) {
+	public static <E extends Comparable<E>> void heapSort(E[] comparables) {
 
 		int n = comparables.length;
 
@@ -511,7 +524,7 @@ public class Sort<E> {
 		// One by one extract an element from heap
 		for (int i = n - 1; i > 0; i--) {
 			// Move current root to end
-			Comparable temp = comparables[0];
+			E temp = comparables[0];
 			comparables[0] = comparables[i];
 			comparables[i] = temp;
 
@@ -527,7 +540,7 @@ public class Sort<E> {
 	 * @param n
 	 * @param i
 	 */
-	private static void heapify(Comparable[] comparables, int n, int i) {
+	private static <E extends Comparable<E>> void heapify(E[] comparables, int n, int i) {
 		int largest = i; // Initialize largest as root
 		int l = 2 * i + 1; // left = 2*i + 1
 		int r = 2 * i + 2; // right = 2*i + 2
@@ -542,7 +555,7 @@ public class Sort<E> {
 
 		// If largest is not root
 		if (largest != i) {
-			Comparable swap = comparables[i];
+			E swap = comparables[i];
 			comparables[i] = comparables[largest];
 			comparables[largest] = swap;
 

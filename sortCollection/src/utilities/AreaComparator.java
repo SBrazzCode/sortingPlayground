@@ -5,13 +5,11 @@ import java.util.Comparator;
 import models.Shape;
 
 //Untyped comparators, for this program was made before we were taught generics.
-public class AreaComparator implements Comparator {
+public class AreaComparator<E extends Shape> implements Comparator<E> {
 
 	@Override
-	public int compare(Object shape1, Object shape2) {
-		Shape s1 = (Shape) shape1;
-		Shape s2 = (Shape) shape2;
-		return (int) Math.ceil((s1.getBaseArea() - s2.getBaseArea()));
+	public int compare(E shape1, E shape2) {
+		return (int) Math.ceil((shape1.getBaseArea() - shape2.getBaseArea()));
 	}
 
 }
