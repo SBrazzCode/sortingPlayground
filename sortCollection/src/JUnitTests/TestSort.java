@@ -27,12 +27,6 @@ class TestSort {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		LinkedList<Integer> list = new LinkedList<>();
-		
-		Scanner correctDataScanner = new Scanner(new File("./sortedArea1.txt"));
-		while(correctDataScanner.hasNextInt()) {
-			list.add(correctDataScanner.nextInt());
-		}
 	}
 
 	@AfterEach
@@ -61,21 +55,4 @@ class TestSort {
 		}
 	}
 	
-//	@Test
-//	void mergeSortPolyfor3Test() {
-//		try {
-//			ShapeSortingDriver.main(new String[] {polyfor3Location, sortByArea, mergeSort});
-//			File outPutFile = new File(currentProgramOutput);
-//			File answerKeyFile = new File(polyfor1AreaCorrect);
-//			boolean b = FileUtils.contentEquals(outPutFile, answerKeyFile);
-//			assertTrue(b);
-//		} catch (FileNotFoundException e) {
-//			e.printStackTrace();
-//			fail();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			fail();
-//		}
-//	}
-
 }

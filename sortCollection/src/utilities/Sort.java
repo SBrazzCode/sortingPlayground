@@ -9,6 +9,7 @@ public class Sort {
 
 	/**
 	 * sorts the comparables using bubblesort.
+	 * 
 	 * @param <E>
 	 * 
 	 * @param comparables
@@ -105,7 +106,7 @@ public class Sort {
 				}
 			}
 
-			//?
+			// ?
 			if (left == 20235) {
 				int f = 1;
 				int s = f + 2;
@@ -166,25 +167,32 @@ public class Sort {
 
 	}
 
+	/**
+	 * An implementation of mergeSort
+	 * 
+	 * @param <E>         The type of object to be sorted.
+	 * @param comparables the objects to be sorted.
+	 * @param comp        how the objects will be compared with each other.
+	 * @param left        the left boundary of comparables to be sorted.
+	 * @param right       the right boundary of comparables to be sorted.
+	 */
 	public static <E> void mergeSort(E[] comparables, Comparator<E> comp, int left, int right) {
 
-		
 		int numProcessors = Runtime.getRuntime().availableProcessors();
 		multiThreadMergeSort(comparables, comp, left, right, numProcessors);
-
 	}
 
 	/**
 	 * sorts the comparables using merge sort recursively.
 	 * 
-	 * @param comparables
-	 * @param comp
-	 * @param left
-	 * @param right
+	 * @param <E>         the type of object to be sorted.
+	 * @param comparables the objects to be sorted.
+	 * @param comp        how the objects will be compared.
+	 * @param left        the left boundary of comparables to be sorted.
+	 * @param right       the right boundary of comparables to be sorted.
 	 */
 	public static <E> void mergeSortUnRunnable(E[] comparables, Comparator<E> comp, int left, int right) {
 
-		
 		if (left < right) {
 			int median = (right + left) / 2;
 
@@ -200,11 +208,21 @@ public class Sort {
 		}
 
 	}
-	
-	static <E> void multiThreadMergeSort(E[] comparables, Comparator<E> comp, int left, int right,
-			int numProcessors) {
-		
-		
+
+	/**
+	 * Creates threads that will mergeSort their partitions of comparables. If the
+	 * number of processors cannot be divided equally, this will call the
+	 * un-threaded mergeSort.
+	 * 
+	 * @param <E>           the type of object to be sorted.
+	 * @param comparables   the objects to be sorted.
+	 * @param comp          how the objects will be compared.
+	 * @param left          the left boundary of comparables to be sorted.
+	 * @param right         the right boundary of comparables to be sorted.
+	 * @param numProcessors the number of virtual cores the host computer has.
+	 */
+	static <E> void multiThreadMergeSort(E[] comparables, Comparator<E> comp, int left, int right, int numProcessors) {
+
 		int median;
 		int rightSize;
 
@@ -214,12 +232,16 @@ public class Sort {
 			// comparables).
 			median = (right - left + 1) / 2;
 
-			// right - median or might just work.
-			// if comparables is even, normal case. Else increase size by 1. (this just handles the extra unit for an odd number size)
+			// right - median or might just work, this is where I let my perfectionism go. I
+			// don't need to refactor this.
+			// if comparables is even, normal case. Else increase size by 1. (this just
+			// handles the extra unit for an odd number size)
 			rightSize = (right - left + 1) % 2 == 0 ? median : median + 1;
 
 			if (numProcessors >= 2) {
-				
+
+				// Comparables needs to be split into two arrays, for if it isn't, there is
+				// cache invalidation -> cache missing.
 				E[] leftArray = createGenericArray(comparables, median);
 				E[] rightArray = createGenericArray(comparables, rightSize);
 
@@ -254,8 +276,8 @@ public class Sort {
 				System.arraycopy(rightArray, 0, comparables, median, rightArray.length);
 
 			} else {
-				
-				//Merge sort the rest on this thread (call the non-multithreaded merge sort).
+
+				// Merge sort the rest on this thread (call the non-multithreaded merge sort).
 				mergeSortUnRunnable(comparables, comp, left, right);
 			}
 
@@ -268,35 +290,59 @@ public class Sort {
 		}
 	}
 
-	public static <E>  E[] merge(E[] comparables, Comparator<E> comp, int left1, int right1, int left2,
-			int right2) {
+	/**
+	 * Merge the two logical arrays inside comparables. They will be merged into an
+	 * auxillary. The elements will be added to auxillary in ascending order from
+	 * left to right.
+	 * 
+	 * @param <E>         The type of objects being merged
+	 * @param comparables The array that contains two logical arrays
+	 * @param comp        the type of comparisons to be made
+	 * @param left1       the left boundary of array1
+	 * @param right1      the right boundary of array1
+	 * @param left2       the left boundary of array2
+	 * @param right2      the right boundary of array2
+	 * @return the auxillary array that contains the merged arrays
+	 */
+	public static <E> E[] merge(E[] comparables, Comparator<E> comp, int left1, int right1, int left2, int right2) {
 
-		//This is an inefficient use of space, fix this after you get the sort working (might just be right2 - left1)
-		E[] auxillary = createGenericArray(comparables, right2 + 1);
+		E[] auxillary = createGenericArray(comparables, right2 - left1 + 1);
 		int i = left1;
 		int j = left2;
 		int k = 0;
+
+		// While both arrays still have elements to be merged, do the typical merge
+		// behaviour.
 		while (i <= right1 && j <= right2) {
+
+			// if the element at the left index is greater than the element in the right
+			// index, assign the element at the left index to auxillary, increment i and k.
+			// Else, the same but for the right element.
 			auxillary[k++] = comp.compare(comparables[i], comparables[j]) > 0 ? comparables[i++] : comparables[j++];
 		}
 
 		while (i <= right1) {
+
+			// If we're here, only the left side has elements to be added to auxillary.
+			// "flush" the left side elements into auxillary.
 			auxillary[k++] = comparables[i++];
 		}
 		while (j <= right2) {
+
+			// If we're here, only the right side has elements to be added to auxillary.
+			// "flush" the right side elements into auxillary.
 			auxillary[k++] = comparables[j++];
 		}
 
 		return auxillary;
 	}
-	
 
 	/**
-	 * sorts the comparables using mergesort.
+	 * A recursive implementation of mergeSort
 	 * 
-	 * @param comparables
-	 * @param left
-	 * @param right
+	 * @param comparables the elements to be sorted
+	 * @param left        the left boundary of comparables to be sorted
+	 * @param right       the right boundary of comparables to be sorted
 	 */
 	public static <E extends Comparable<E>> void mergeSort(E[] comparables, int left, int right) {
 
@@ -312,14 +358,17 @@ public class Sort {
 	}
 
 	/**
-	 * merges two arrays into an auxillary.
+	 * Merge the two logical arrays inside comparables. They will be merged into an
+	 * auxillary. The elements will be added to auxillary in ascending order from
+	 * left to right.
 	 * 
-	 * @param comparables
-	 * @param left1
-	 * @param right1
-	 * @param left2
-	 * @param right2
-	 * @return
+	 * @param <E>         The type of objects being merged
+	 * @param comparables The array that contains two logical arrays
+	 * @param left1       the left boundary of array1
+	 * @param right1      the right boundary of array1
+	 * @param left2       the left boundary of array2
+	 * @param right2      the right boundary of array2
+	 * @return the auxillary array that contains the merged arrays
 	 */
 	private static <E extends Comparable<E>> E[] merge(E[] comparables, int left1, int right1, int left2, int right2) {
 
@@ -327,20 +376,41 @@ public class Sort {
 		int i = left1;
 		int j = left2;
 		int k = 0;
+
+		// While both arrays still have elements to be merged, do the typical merge
+		// behaviour.
 		while (i <= right1 && j <= right2) {
+
+			// if the element at the left index is greater than the element in the right
+			// index, assign the element at the left index to auxillary, increment i and k.
+			// Else, the same but for the right element.
 			auxillary[k++] = comparables[i].compareTo(comparables[j]) > 0 ? comparables[i++] : comparables[j++];
 		}
 
 		while (i <= right1) {
+
+			// If we're here, only the left side has elements to be added to auxillary.
+			// "flush" the left side elements into auxillary.
 			auxillary[k++] = comparables[i++];
 		}
 		while (j <= right2) {
+
+			// If we're here, only the right side has elements to be added to auxillary.
+			// "flush" the right side elements into auxillary.
 			auxillary[k++] = comparables[j++];
 		}
 
 		return auxillary;
 	}
-	
+
+	/**
+	 * Instantiate an array of type E[].
+	 * 
+	 * @param <E> The type of array to be instantiated
+	 * @param arrayWithType An example array of type E. Used to getClass().getComponenentType().
+	 * @param size the size of the array to instantiate
+	 * @return a newly instantiated array of type E[].
+	 */
 	@SuppressWarnings("unchecked")
 	private static <E> E[] createGenericArray(E[] arrayWithType, int size) {
 		return (E[]) Array.newInstance(arrayWithType.getClass().getComponentType(), size);
