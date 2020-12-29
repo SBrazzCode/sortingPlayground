@@ -1,5 +1,5 @@
  <h2>Introduction</h2>
- This is my attempt to remove the bottlenecks in my dual-threaded MergeSort 
+ This is my attempt to remove the bottlenecks in my dual-threaded MergeSort.
  
  *Spoiler* I went further and made it scale to the number of processors on the calling system.
  
