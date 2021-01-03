@@ -21,9 +21,10 @@
 <h2>How To Use (Long)</h2>
 
 Dependencies: [Eclipse](https://www.eclipse.org/downloads/), [commons-io-2.8.0.jar](https://commons.apache.org/proper/commons-io/download_io.cgi)
-1. Clone the Repository
-2. (Optional) Create a jar
-3. Run with these arguments
+1. Clone the Repository with eclipse.
+2. Add external jars
+3. (Optional) Create a jar
+4. Run i.e. Run with these arguments
 `–fpolyfor1.txt –Ta –Sm`
 
 if polyfor1.txt is not in the same directory as the .jar, or it is not directly under the sortCollection project directory, you must provide the absolute path after -f.
